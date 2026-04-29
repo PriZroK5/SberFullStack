@@ -66,7 +66,6 @@ class CoworkingBookingSerializer(serializers.ModelSerializer):
                 {'time_end': 'Время окончания должно быть позже времени начала'}
             )
 
-        # Проверяем пересечение с существующими бронированиями
         overlapping = CoworkingBooking.objects.filter(
             date=date,
             time_start__lt=time_end,

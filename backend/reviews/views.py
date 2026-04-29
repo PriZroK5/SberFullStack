@@ -87,11 +87,10 @@ class SendEmailView(APIView):
             <h3>Новый вопрос с сайта</h3>
             <p><strong>Имя:</strong> {name or 'Не указано'}</p>
             <p><strong>Контакт:</strong> {contact}</p>
-            <p><strong>Вопрос:</strong><br/>{text.replace('\n', '<br/>')}</p>
+            <p><strong>Вопрос:</strong><br/>{text.replace(chr(10), '<br/>')}</p>
             """
             plain_message = f"Имя: {name or 'Не указано'}\nКонтакт: {contact}\nВопрос: {text}"
 
-            # Формируем письмо
             msg = MIMEMultipart('alternative')
             msg['Subject'] = subject
             msg['From'] = settings.EMAIL_HOST_USER
@@ -99,7 +98,6 @@ class SendEmailView(APIView):
             msg.attach(MIMEText(plain_message, 'plain'))
             msg.attach(MIMEText(html_message, 'html'))
 
-            # Отключаем проверку SSL-сертификата (только для разработки)
             context = ssl.create_default_context()
             context.check_hostname = False
             context.verify_mode = ssl.CERT_NONE
@@ -118,20 +116,15 @@ class CoworkingBookingView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        """Возвращает список занятых слотов на указанную дату."""
         date = request.query_params.get('date')
         if not date:
             return Response({'error': 'Укажите дату (параметр date)'}, status=400)
-        bookings = CoworkingBooking.objects.filter(date=date).values(
-            'time_start', 'time_end'
-        )
+        bookings = CoworkingBooking.objects.filter(date=date).values('time_start', 'time_end')
         return Response(list(bookings))
 
     def post(self, request):
-        """Создаёт бронирование, если слот свободен, и отправляет письмо."""
         serializer = CoworkingBookingSerializer(data=request.data)
         if not serializer.is_valid():
-            # Если конфликт — возвращаем понятное сообщение
             conflict = serializer.errors.get('conflict')
             if conflict:
                 return Response(
@@ -145,7 +138,6 @@ class CoworkingBookingView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def _send_confirmation_email(self, booking: CoworkingBooking):
-        """Отправляет письмо-подтверждение на EMAIL_RECIPIENT из settings."""
         try:
             date_str = booking.date.strftime('%d.%m.%Y')
             start_str = booking.time_start.strftime('%H:%M')
@@ -162,9 +154,7 @@ class CoworkingBookingView(APIView):
               <tr><td style="padding:6px 16px 6px 0;color:#888;">Время</td>
                   <td style="padding:6px 0;font-weight:600;">{start_str} – {end_str}</td></tr>
             </table>
-            <p style="margin-top:16px;color:#555;">
-              Бронирование сохранено в базе данных.
-            </p>
+            <p style="margin-top:16px;color:#555;">Бронирование сохранено в базе данных.</p>
             """
             plain_body = (
                 f"Новое бронирование коворкинга\n"
@@ -184,14 +174,8 @@ class CoworkingBookingView(APIView):
             ctx.check_hostname = False
             ctx.verify_mode = ssl.CERT_NONE
 
-            with smtplib.SMTP_SSL(
-                settings.EMAIL_HOST, settings.EMAIL_PORT, context=ctx
-            ) as server:
+            with smtplib.SMTP_SSL(settings.EMAIL_HOST, settings.EMAIL_PORT, context=ctx) as server:
                 server.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-                server.sendmail(
-                    settings.EMAIL_HOST_USER,
-                    [settings.EMAIL_RECIPIENT],
-                    msg.as_string(),
-                )
+                server.sendmail(settings.EMAIL_HOST_USER, [settings.EMAIL_RECIPIENT], msg.as_string())
         except Exception as exc:
             print(f'[CoworkingBooking] Ошибка отправки письма: {exc}')
