@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Review
+from .models import Review, CoworkingBooking
 import re
 
 
@@ -48,3 +48,38 @@ class ReviewSerializer(serializers.ModelSerializer):
         model = Review
         fields = ['id', 'author_name', 'text', 'rating', 'created_at']
         read_only_fields = ['id', 'author_name', 'created_at']
+
+
+class CoworkingBookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CoworkingBooking
+        fields = ['id', 'name', 'date', 'time_start', 'time_end', 'created_at']
+        read_only_fields = ['id', 'created_at']
+
+    def validate(self, data):
+        date = data.get('date')
+        time_start = data.get('time_start')
+        time_end = data.get('time_end')
+
+        if time_end <= time_start:
+            raise serializers.ValidationError(
+                {'time_end': 'Время окончания должно быть позже времени начала'}
+            )
+
+        # Проверяем пересечение с существующими бронированиями
+        overlapping = CoworkingBooking.objects.filter(
+            date=date,
+            time_start__lt=time_end,
+            time_end__gt=time_start,
+        )
+        if overlapping.exists():
+            conflict = overlapping.first()
+            raise serializers.ValidationError({
+                'conflict': (
+                    f'Коворкинг уже занят {conflict.date.strftime("%d.%m.%Y")} '
+                    f'с {conflict.time_start.strftime("%H:%M")} '
+                    f'до {conflict.time_end.strftime("%H:%M")}'
+                )
+            })
+
+        return data

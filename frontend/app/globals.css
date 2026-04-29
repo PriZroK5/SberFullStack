@@ -91,17 +91,88 @@ body {
 .nav-cta:hover { background:rgba(244,165,130,0.1); transform:translateY(-1px); }
 
 .mobile-bar {
-  position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
-  background:var(--nav-bg); -webkit-backdrop-filter: blur(20px); backdrop-filter:blur(20px);
-  border-radius:60px; padding:10px 22px; display:none; gap:28px;
-  z-index:101; border:1px solid var(--border);
+  position: fixed;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: auto;
+  max-width: calc(100vw - 24px);
+  background: var(--nav-bg);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-radius: 60px;
+  border: 1px solid var(--border);
+  z-index: 101;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0;
+  padding: 6px 10px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
 }
-.mobile-bar button { background:none; border:none; font-size:20px; cursor:pointer; color:var(--muted); transition:.2s; }
-.mobile-bar button.act { color:var(--peach); transform:scale(1.15); }
+.mobile-bar::-webkit-scrollbar {
+  display: none;
+}
+.mobile-bar button {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 10px;
+  border-radius: 40px;
+  white-space: nowrap;
+  min-width: 52px;
+}
+.mobile-bar button.act {
+  color: var(--peach);
+  transform: scale(1.05);
+}
+.mobile-bar-icon {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mobile-bar-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 @media(max-width:768px){
   .nav-links { display:none; }
   .nav { padding:14px 20px; }
   .mobile-bar { display:flex; }
+}
+
+@media (max-width: 480px) {
+  .mobile-bar {
+    gap: 10px;
+    padding: 6px 16px;
+    margin: 0 8px;
+  }
+  .mobile-bar button {
+    padding: 4px 8px;
+  }
+  .mobile-bar-label {
+    font-size: 8px;
+  }
+  .mobile-bar-icon {
+    width: 24px;
+    height: 24px;
+  }
 }
 
 .btn-p, .btn-s {
@@ -144,8 +215,14 @@ body {
 .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1100px; margin:0 auto; }
 .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:24px; max-width:1100px; margin:0 auto; }
 .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:24px; max-width:1100px; margin:0 auto; }
-@media(max-width:1024px){ .grid-3 { grid-template-columns:repeat(2,1fr); } }
-@media(max-width:768px){ .grid-3,.grid-2,.grid-4 { grid-template-columns:1fr; } }
+.grid-5 { display:grid; grid-template-columns:repeat(5,1fr); gap:24px; max-width:1100px; margin:0 auto; }
+@media(max-width:1024px){ 
+  .grid-3 { grid-template-columns:repeat(2,1fr); }
+  .grid-5 { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:768px){ 
+  .grid-3,.grid-2,.grid-4,.grid-5 { grid-template-columns:1fr; }
+}
 
 .slider-wrap { position:relative; max-width:900px; margin:0 auto; }
 .slide-img { width:100%; height:420px; object-fit:cover; border-radius:24px; display:block; }
@@ -298,7 +375,6 @@ body {
   }
 }
 
-/* Для планшетов (до 1024px) */
 @media (max-width: 1024px) {
   .grid-3 {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -307,6 +383,10 @@ body {
   .contacts-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 20px;
+  }
+  #contacts > div:last-child {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
   }
   .slider-wrap {
     max-width: 100%;
@@ -325,9 +405,17 @@ body {
     padding: 12px 28px;
     font-size: 14px;
   }
+  .nav {
+    padding: 14px 40px;
+  }
+  .nav-links {
+    gap: 20px;
+  }
+  .nav-links a {
+    font-size: 11px;
+  }
 }
 
-/* Для мобильных телефонов (до 768px) */
 @media (max-width: 768px) {
   .sec {
     padding: 60px 20px !important;
@@ -372,15 +460,15 @@ body {
   .slide-img {
     height: 220px;
   }
-  .slider-btn {
+  .sl-btn {
     width: 36px;
     height: 36px;
     font-size: 18px;
   }
-  .slider-btn-left {
+  .sl-l {
     left: 8px;
   }
-  .slider-btn-right {
+  .sl-r {
     right: 8px;
   }
   .test-card {
@@ -429,30 +517,141 @@ body {
     padding: 24px 20px;
   }
   .mobile-bar {
-    gap: 20px;
-    padding: 8px 18px;
+    gap: 12px;
+    padding: 8px 12px;
+    bottom: 12px;
+    max-width: 95%;
   }
   .mobile-bar button {
-    font-size: 18px;
+    font-size: 16px;
+    padding: 8px;
   }
-  /* AI-кнопка чуть меньше и правее */
-  .ai-fab {
+  .mobile-bar-icon {
+    width: 24px;
+    height: 24px;
+  }
+  .mobile-bar-label {
+    font-size: 10px;
+    margin-top: 2px;
+  }
+  .nav {
+    padding: 12px 16px;
+  }
+  .nav-logo {
+    font-size: 16px;
+  }
+  .nav-right {
+    gap: 8px;
+  }
+  .nav-right > span {
+    font-size: 11px !important;
+    padding: 7px 12px !important;
+  }
+  .nav-right > button {
+    font-size: 11px !important;
+    padding: 7px 14px !important;
+  }
+  .nav-cta {
+    font-size: 11px;
+    padding: 7px 14px;
+  }
+  #contacts > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  #contacts .card {
+    padding: 24px 20px !important;
+  }
+  #contacts .card h3 {
+    font-size: 15px !important;
+  }
+  #contacts .card p {
+    font-size: 13px !important;
+    margin-bottom: 16px !important;
+  }
+  #contacts .card .btn-s,
+  #contacts .card .btn-p {
+    font-size: 13px !important;
+    padding: 10px 18px !important;
+  }
+  .modal-box {
+    padding: 28px 20px;
+    max-width: 95%;
+    border-radius: 24px;
+  }
+  .modal-input {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+  .deco {
+    opacity: 0.3 !important;
+  }
+  .testimonial-slider {
+    padding: 0 8px;
+  }
+  .testimonial-slide {
+    padding: 0 4px;
+  }
+  .loyalty-categories {
+    gap: 8px !important;
+    flex-wrap: wrap;
+  }
+  .loyalty-categories button {
+    padding: 8px 16px !important;
+    font-size: 12px !important;
+  }
+  .checklist-modal {
+    max-width: 95%;
+    padding: 20px;
+    max-height: 85vh;
+  }
+  button[aria-label="button"] {
     width: 48px !important;
     height: 48px !important;
     font-size: 24px !important;
-    bottom: 16px !important;
+    bottom: 90px !important;
     right: 16px !important;
   }
-  /* AI-модалка на всю ширину на телефонах */
-  .ai-modal {
-    width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    border-radius: 20px 20px 0 0 !important;
+  .progress {
+    display: none;
+  }
+  #hero {
+    min-height: 90vh;
+    padding-top: 100px;
+  }
+  .grid-3 .card h3 {
+    font-size: 14px;
+  }
+  .grid-3 .card p {
+    font-size: 13px;
+  }
+  .grid-3 .card img {
+    width: 40px !important;
+    height: 40px !important;
+    margin-bottom: 16px !important;
+  }
+  .s-title {
+    font-size: clamp(24px, 6vw, 36px);
+  }
+  .s-sub {
+    font-size: 14px;
+  }
+  .s-label {
+    font-size: 10px;
+  }
+  footer {
+    padding: 24px 20px !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+  footer > div:first-child {
+    font-size: 13px !important;
+  }
+  footer > div:last-child {
+    font-size: 12px !important;
   }
 }
 
-/* Для очень маленьких экранов (до 480px) */
 @media (max-width: 480px) {
   .hero-title {
     font-size: 28px;
@@ -465,6 +664,74 @@ body {
   }
   .hero-badge {
     font-size: 9px;
+  }
+  .nav {
+    padding: 10px 12px;
+  }
+  .nav-logo {
+    font-size: 14px;
+  }
+  .nav-right {
+    gap: 6px;
+  }
+  .nav-right > span {
+    font-size: 10px !important;
+    padding: 6px 10px !important;
+  }
+  .nav-right > button {
+    font-size: 10px !important;
+    padding: 6px 12px !important;
+  }
+  .nav-cta {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+  .mobile-bar {
+    gap: 8px;
+    padding: 6px 10px;
+    bottom: 10px;
+  }
+  .mobile-bar button {
+    padding: 6px;
+  }
+  .mobile-bar-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .mobile-bar-label {
+    font-size: 8px;
+  }
+  #contacts .card {
+    padding: 20px 16px !important;
+  }
+  #contacts .card h3 {
+    font-size: 14px !important;
+  }
+  #contacts .card p {
+    font-size: 12px !important;
+  }
+  #contacts .card .btn-s,
+  #contacts .card .btn-p {
+    font-size: 12px !important;
+    padding: 9px 16px !important;
+  }
+  .contact-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 28px !important;
+  }
+  .btn-p, .btn-s {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  .card {
+    padding: 20px !important;
+  }
+  .modal-box {
+    padding: 24px 16px;
+  }
+  .modal-box h3 {
+    font-size: 18px;
   }
 }
 .checklist-modal-overlay {
@@ -492,5 +759,82 @@ body {
   .checklist-modal {
     max-width: 90%;
     padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .mobile-bar {
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 95vw;
+    width: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    justify-content: flex-start;
+    gap: 14px;
+    padding: 10px 18px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  /* Кнопки не должны сжиматься и переноситься */
+  .mobile-bar button {
+    flex: 0 0 auto;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 8px;
+  }
+
+  /* Скрываем скроллбар в Webkit-браузерах (опционально, для чистоты) */
+  .mobile-bar::-webkit-scrollbar {
+    height: 3px;
+  }
+  .mobile-bar::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+  }
+  .mobile-bar::-webkit-scrollbar-thumb {
+    background: var(--peach);
+    border-radius: 10px;
+  }
+}
+
+/* Для очень маленьких экранов (≤ 480px) – делаем компактнее */
+@media (max-width: 480px) {
+  .mobile-bar {
+    gap: 10px;
+    padding: 8px 14px;
+    max-width: 98vw;
+  }
+  .mobile-bar button {
+    padding: 4px 6px;
+  }
+  .mobile-bar-label {
+    font-size: 8px;
+  }
+  .mobile-bar-icon {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media (max-width: 360px) {
+  .mobile-bar button {
+    padding: 5px 8px;
+    min-width: 46px;
+  }
+  .mobile-bar-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .mobile-bar-label {
+    font-size: 8px;
+  }
+}
+@media (min-width: 769px) {
+  .mobile-bar {
+    display: none !important;
   }
 }

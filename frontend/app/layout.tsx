@@ -10,14 +10,14 @@ const geistSans = Geist({
 });
 
 const sbLight = localFont({
-  src: '../public/fonts/SBSansDisplay-Light.ttf',
+  src: './fonts/SBSANSDISPLAY-LIGHT.ttf',
   variable: '--font-sb-light',
   weight: '300',
   display: 'swap',
 });
 
 const sbSemibold = localFont({
-  src: '../public/fonts/SBSansDisplay-Semibold.ttf',
+  src: './fonts/SBSANSDISPLAY-SEMIBOLD.ttf',
   variable: '--font-sb-semibold',
   weight: '600',
   display: 'swap',

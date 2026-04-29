@@ -80,3 +80,12 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False
+EMAIL_HOST_USER = 'michaelvoov@yandex.ru'
+EMAIL_HOST_PASSWORD = 'ulemyonrsgieipnd'
+EMAIL_RECIPIENT = 'michaelvoov@yandex.ru'
